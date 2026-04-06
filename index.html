@@ -37,11 +37,99 @@
       font-family: 'DM Sans', sans-serif;
       min-height: 100vh;
       background: var(--bg);
-      padding: 2.5rem 1rem 4rem;
+      padding: 0 0 4rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       color: var(--text-primary);
+    }
+
+    /* ── Hero Image ── */
+    .hero {
+      width: 100%;
+      height: 420px;
+      position: relative;
+      overflow: hidden;
+      background: #1a1a18;
+    }
+
+    .hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.9s ease;
+    }
+    .hero-img.loaded { opacity: 1; }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.6) 100%);
+    }
+
+    .hero-label {
+      position: absolute;
+      bottom: 20px;
+      left: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-tag {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.1);
+      border: 0.5px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
+    .hero-refresh {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      background: none;
+      border: 0.5px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.15s;
+    }
+    .hero-refresh:hover { background: rgba(255,255,255,0.15); }
+
+    .hero-skeleton {
+      position: absolute;
+      inset: 0;
+      background: #1e1e1c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .skeleton-pulse {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-top-color: rgba(255,255,255,0.3);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Content ── */
+    .content {
+      width: 100%;
+      max-width: 560px;
+      padding: 2rem 1rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .top-tag {
@@ -61,7 +149,6 @@
       border: 0.5px solid var(--border);
       border-radius: var(--radius-xl);
       padding: 2rem 2.25rem 1.75rem;
-      max-width: 560px;
       width: 100%;
       margin-bottom: 2rem;
       text-align: center;
@@ -126,7 +213,6 @@
       flex-direction: column;
       gap: 1.25rem;
       width: 100%;
-      max-width: 560px;
     }
 
     .section-label {
@@ -183,106 +269,187 @@
       color: var(--text-muted);
       text-align: center;
       margin-top: 2.5rem;
-      max-width: 380px;
       line-height: 1.7;
     }
   </style>
 </head>
 <body>
 
-  <div class="top-tag">You got redirected — that's a win</div>
-
-  <div class="quote-box">
-    <span class="quote-mark">"</span>
-    <p class="quote-text" id="quote-text">Loading quote...</p>
-    <p class="quote-author" id="quote-author"></p>
-    <button class="refresh-btn" onclick="nextQuote()">&#8635; New quote</button>
+  <!-- Hero Image -->
+  <div class="hero" id="hero">
+    <div class="hero-skeleton" id="skeleton">
+      <div class="skeleton-pulse"></div>
+    </div>
+    <img class="hero-img" id="hero-img" alt="Daily motivation" />
+    <div class="hero-overlay"></div>
+    <div class="hero-label">
+      <span class="hero-tag" id="hero-tag">Loading...</span>
+      <button class="hero-refresh" onclick="loadNewImage()">&#8635; New image</button>
+    </div>
   </div>
 
-  <p class="prompt">
-    <strong>One question before you open anything:</strong>
-    What is the one thing I actually need to do right now?
-  </p>
+  <div class="content">
+    <br>
+    <div class="top-tag">You got redirected — that's a win</div>
 
-  <div class="sections">
-
-    <div>
-      <p class="section-label">🧠 Learning</p>
-      <div class="link-grid">
-        <a class="link-card" href="https://brilliant.org" target="_blank">
-          <span class="link-name">Brilliant</span>
-          <span class="link-desc">Math & science problems</span>
-        </a>
-        <a class="link-card" href="https://www.khanacademy.org" target="_blank">
-          <span class="link-name">Khan Academy</span>
-          <span class="link-desc">Free structured courses</span>
-        </a>
-        <a class="link-card" href="https://read.readwise.io" target="_blank">
-          <span class="link-name">Readwise</span>
-          <span class="link-desc">Revisit your highlights</span>
-        </a>
-      </div>
+    <div class="quote-box">
+      <span class="quote-mark">"</span>
+      <p class="quote-text" id="quote-text">Loading quote...</p>
+      <p class="quote-author" id="quote-author"></p>
+      <button class="refresh-btn" onclick="nextQuote()">&#8635; New quote</button>
     </div>
 
-    <div>
-      <p class="section-label">💻 Deep Work & Coding</p>
-      <div class="link-grid">
-        <a class="link-card" href="https://leetcode.com/problemset" target="_blank">
-          <span class="link-name">LeetCode</span>
-          <span class="link-desc">Jump into a problem</span>
-        </a>
-        <a class="link-card" href="https://github.com" target="_blank">
-          <span class="link-name">GitHub</span>
-          <span class="link-desc">Pick up your projects</span>
-        </a>
-        <a class="link-card" href="https://roadmap.sh" target="_blank">
-          <span class="link-name">Roadmap.sh</span>
-          <span class="link-desc">Stay on your learning path</span>
-        </a>
+    <p class="prompt">
+      <strong>One question before you open anything:</strong>
+      What is the one thing I actually need to do right now?
+    </p>
+
+    <div class="sections">
+
+      <div>
+        <p class="section-label">🧠 Learning</p>
+        <div class="link-grid">
+          <a class="link-card" href="https://brilliant.org" target="_blank">
+            <span class="link-name">Brilliant</span>
+            <span class="link-desc">Math & science problems</span>
+          </a>
+          <a class="link-card" href="https://www.khanacademy.org" target="_blank">
+            <span class="link-name">Khan Academy</span>
+            <span class="link-desc">Free structured courses</span>
+          </a>
+          <a class="link-card" href="https://read.readwise.io" target="_blank">
+            <span class="link-name">Readwise</span>
+            <span class="link-desc">Revisit your highlights</span>
+          </a>
+        </div>
       </div>
+
+      <div>
+        <p class="section-label">💻 Deep Work & Coding</p>
+        <div class="link-grid">
+          <a class="link-card" href="https://leetcode.com/problemset" target="_blank">
+            <span class="link-name">LeetCode</span>
+            <span class="link-desc">Jump into a problem</span>
+          </a>
+          <a class="link-card" href="https://github.com" target="_blank">
+            <span class="link-name">GitHub</span>
+            <span class="link-desc">Pick up your projects</span>
+          </a>
+          <a class="link-card" href="https://roadmap.sh" target="_blank">
+            <span class="link-name">Roadmap.sh</span>
+            <span class="link-desc">Stay on your learning path</span>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <p class="section-label">🧘 Mindfulness & Calm</p>
+        <div class="link-grid">
+          <a class="link-card" href="https://insighttimer.com" target="_blank">
+            <span class="link-name">Insight Timer</span>
+            <span class="link-desc">Free guided meditations</span>
+          </a>
+          <a class="link-card" href="https://www.calm.com" target="_blank">
+            <span class="link-name">Calm</span>
+            <span class="link-desc">Breathing & relaxation</span>
+          </a>
+          <a class="link-card" href="https://www.donothingfor2minutes.com" target="_blank">
+            <span class="link-name">Do Nothing</span>
+            <span class="link-desc">2-minute reset</span>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <p class="section-label">🏋️ Fitness & Health</p>
+        <div class="link-grid">
+          <a class="link-card" href="https://darebee.com" target="_blank">
+            <span class="link-name">Darebee</span>
+            <span class="link-desc">No-equipment workouts</span>
+          </a>
+          <a class="link-card" href="https://www.myfitnesspal.com" target="_blank">
+            <span class="link-name">MyFitnessPal</span>
+            <span class="link-desc">Log meals & track goals</span>
+          </a>
+          <a class="link-card" href="https://stretchminder.com" target="_blank">
+            <span class="link-name">Stretchminder</span>
+            <span class="link-desc">Desk stretches & breaks</span>
+          </a>
+        </div>
+      </div>
+
     </div>
 
-    <div>
-      <p class="section-label">🧘 Mindfulness & Calm</p>
-      <div class="link-grid">
-        <a class="link-card" href="https://insighttimer.com" target="_blank">
-          <span class="link-name">Insight Timer</span>
-          <span class="link-desc">Free guided meditations</span>
-        </a>
-        <a class="link-card" href="https://www.calm.com" target="_blank">
-          <span class="link-name">Calm</span>
-          <span class="link-desc">Breathing & relaxation</span>
-        </a>
-        <a class="link-card" href="https://www.donothingfor2minutes.com" target="_blank">
-          <span class="link-name">Do Nothing</span>
-          <span class="link-desc">2-minute reset</span>
-        </a>
-      </div>
-    </div>
-
-    <div>
-      <p class="section-label">🏋️ Fitness & Health</p>
-      <div class="link-grid">
-        <a class="link-card" href="https://darebee.com" target="_blank">
-          <span class="link-name">Darebee</span>
-          <span class="link-desc">No-equipment workouts</span>
-        </a>
-        <a class="link-card" href="https://www.myfitnesspal.com" target="_blank">
-          <span class="link-name">MyFitnessPal</span>
-          <span class="link-desc">Log meals & track goals</span>
-        </a>
-        <a class="link-card" href="https://stretchminder.com" target="_blank">
-          <span class="link-name">Stretchminder</span>
-          <span class="link-desc">Desk stretches & breaks</span>
-        </a>
-      </div>
-    </div>
-
+    <p class="bottom-note">Distraction blocked by BlockHero. You made it here — now make it count.</p>
   </div>
-
-  <p class="bottom-note">Distraction blocked by BlockHero. You made it here — now make it count.</p>
 
   <script>
+    const travelKeywords = [
+      'himalaya mountains landscape',
+      'western ghats forest mist india',
+      'india coastline cliffs ocean',
+      'open road highway mountains india',
+      'spiti valley dramatic landscape',
+      'ladakh mountains sky',
+      'india jungle trail adventure',
+      'coorg forest morning light',
+    ];
+
+    const fitnessKeywords = [
+      'man running outdoor early morning',
+      'outdoor calisthenics training',
+      'trail running mountains athlete',
+      'functional fitness outdoor',
+      'man pushups sunrise athletic',
+      'outdoor workout discipline morning',
+      'man cycling mountain road',
+      'athlete training grit outdoor',
+    ];
+
+    let currentTheme = '';
+    let currentKeywordIndex = 0;
+
+    function getThemeForToday() {
+      return new Date().getDate() % 2 === 0 ? 'travel' : 'fitness';
+    }
+
+    function loadImage(keyword, theme) {
+      const img = document.getElementById('hero-img');
+      const skeleton = document.getElementById('skeleton');
+      const tag = document.getElementById('hero-tag');
+
+      img.classList.remove('loaded');
+      skeleton.style.display = 'flex';
+      tag.textContent = theme === 'travel' ? '🏔 Travel' : '🏋️ Fitness';
+
+      const url = `https://source.unsplash.com/1600x900/?${encodeURIComponent(keyword)}&sig=${Date.now()}`;
+
+      const tempImg = new Image();
+      tempImg.onload = () => {
+        img.src = tempImg.src;
+        img.classList.add('loaded');
+        skeleton.style.display = 'none';
+      };
+      tempImg.onerror = () => {
+        skeleton.style.display = 'none';
+      };
+      tempImg.src = url;
+    }
+
+    function loadNewImage() {
+      const keywords = currentTheme === 'travel' ? travelKeywords : fitnessKeywords;
+      currentKeywordIndex = (currentKeywordIndex + 1) % keywords.length;
+      loadImage(keywords[currentKeywordIndex], currentTheme);
+    }
+
+    function initImage() {
+      currentTheme = getThemeForToday();
+      const keywords = currentTheme === 'travel' ? travelKeywords : fitnessKeywords;
+      const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+      currentKeywordIndex = dayOfYear % keywords.length;
+      loadImage(keywords[currentKeywordIndex], currentTheme);
+    }
+
     const quotes = [
       { text: "The successful warrior is the average man, with laser-like focus.", author: "Bruce Lee" },
       { text: "You will never reach your destination if you stop and throw stones at every dog that barks.", author: "Winston Churchill" },
@@ -296,6 +463,9 @@
       { text: "You don't need more time. You need more focus.", author: "Unknown" },
       { text: "Small daily improvements over time lead to stunning results.", author: "Robin Sharma" },
       { text: "Concentrate all your thoughts upon the work in hand. The sun's rays do not burn until brought to a focus.", author: "Alexander Graham Bell" },
+      { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle" },
+      { text: "Discipline is choosing between what you want now and what you want most.", author: "Abraham Lincoln" },
+      { text: "Do something today that your future self will thank you for.", author: "Sean Patrick Flanery" },
     ];
 
     let current = Math.floor(Math.random() * quotes.length);
@@ -310,6 +480,7 @@
       showQuote(current);
     }
 
+    initImage();
     showQuote(current);
   </script>
 
