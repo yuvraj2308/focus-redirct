@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You got redirected — that's a win</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f1;
+      --surface: #ffffff;
+      --border: rgba(0,0,0,0.1);
+      --border-hover: rgba(0,0,0,0.2);
+      --text-primary: #1a1a18;
+      --text-secondary: #555550;
+      --text-muted: #999990;
+      --radius-lg: 14px;
+      --radius-xl: 18px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18;
+        --surface: #242420;
+        --border: rgba(255,255,255,0.1);
+        --border-hover: rgba(255,255,255,0.2);
+        --text-primary: #f0efe8;
+        --text-secondary: #aaa99f;
+        --text-muted: #666660;
+      }
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 2.5rem 1rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-primary);
+    }
+
+    .top-tag {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border: 0.5px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 16px;
+      margin-bottom: 1.75rem;
+      background: var(--surface);
+    }
+
+    .quote-box {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 2rem 2.25rem 1.75rem;
+      max-width: 560px;
+      width: 100%;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .quote-mark {
+      font-family: 'Playfair Display', serif;
+      font-size: 52px;
+      color: var(--text-muted);
+      line-height: 0.55;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .quote-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .quote-author {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .refresh-btn {
+      background: none;
+      border: 0.5px solid var(--border-hover);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      margin-top: 1.25rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.15s;
+    }
+    .refresh-btn:hover { background: var(--bg); }
+
+    .prompt {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: center;
+      max-width: 380px;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+    .prompt strong {
+      color: var(--text-primary);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .sections {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+      padding-left: 2px;
+    }
+
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 480px) {
+      .link-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .link-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .link-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg);
+    }
+
+    .link-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .link-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .bottom-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 2.5rem;
+      max-width: 380px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-tag">You got redirected — that's a win</div>
+
+  <div class="quote-box">
+    <span class="quote-mark">"</span>
+    <p class="quote-text" id="quote-text">Loading quote...</p>
+    <p class="quote-author" id="quote-author"></p>
+    <button class="refresh-btn" onclick="nextQuote()">&#8635; New quote</button>
+  </div>
+
+  <p class="prompt">
+    <strong>One question before you open anything:</strong>
+    What is the one thing I actually need to do right now?
+  </p>
+
+  <div class="sections">
+
+    <div>
+      <p class="section-label">🧠 Learning</p>
+      <div class="link-grid">
+        <a class="link-card" href="https://brilliant.org" target="_blank">
+          <span class="link-name">Brilliant</span>
+          <span class="link-desc">Math & science problems</span>
+        </a>
+        <a class="link-card" href="https://www.khanacademy.org" target="_blank">
+          <span class="link-name">Khan Academy</span>
+          <span class="link-desc">Free structured courses</span>
+        </a>
+        <a class="link-card" href="https://read.readwise.io" target="_blank">
+          <span class="link-name">Readwise</span>
+          <span class="link-desc">Revisit your highlights</span>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <p class="section-label">💻 Deep Work & Coding</p>
+      <div class="link-grid">
+        <a class="link-card" href="https://leetcode.com/problemset" target="_blank">
+          <span class="link-name">LeetCode</span>
+          <span class="link-desc">Jump into a problem</span>
+        </a>
+        <a class="link-card" href="https://github.com" target="_blank">
+          <span class="link-name">GitHub</span>
+          <span class="link-desc">Pick up your projects</span>
+        </a>
+        <a class="link-card" href="https://roadmap.sh" target="_blank">
+          <span class="link-name">Roadmap.sh</span>
+          <span class="link-desc">Stay on your learning path</span>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <p class="section-label">🧘 Mindfulness & Calm</p>
+      <div class="link-grid">
+        <a class="link-card" href="https://insighttimer.com" target="_blank">
+          <span class="link-name">Insight Timer</span>
+          <span class="link-desc">Free guided meditations</span>
+        </a>
+        <a class="link-card" href="https://www.calm.com" target="_blank">
+          <span class="link-name">Calm</span>
+          <span class="link-desc">Breathing & relaxation</span>
+        </a>
+        <a class="link-card" href="https://www.donothingfor2minutes.com" target="_blank">
+          <span class="link-name">Do Nothing</span>
+          <span class="link-desc">2-minute reset</span>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <p class="section-label">🏋️ Fitness & Health</p>
+      <div class="link-grid">
+        <a class="link-card" href="https://darebee.com" target="_blank">
+          <span class="link-name">Darebee</span>
+          <span class="link-desc">No-equipment workouts</span>
+        </a>
+        <a class="link-card" href="https://www.myfitnesspal.com" target="_blank">
+          <span class="link-name">MyFitnessPal</span>
+          <span class="link-desc">Log meals & track goals</span>
+        </a>
+        <a class="link-card" href="https://stretchminder.com" target="_blank">
+          <span class="link-name">Stretchminder</span>
+          <span class="link-desc">Desk stretches & breaks</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="bottom-note">Distraction blocked by BlockHero. You made it here — now make it count.</p>
+
+  <script>
+    const quotes = [
+      { text: "The successful warrior is the average man, with laser-like focus.", author: "Bruce Lee" },
+      { text: "You will never reach your destination if you stop and throw stones at every dog that barks.", author: "Winston Churchill" },
+      { text: "It is not that we have little time, but that we waste a great deal of it.", author: "Seneca" },
+      { text: "The key is not to prioritize what's on your schedule, but to schedule your priorities.", author: "Stephen Covey" },
+      { text: "Focus is a matter of deciding what things you're not going to do.", author: "John Carmack" },
+      { text: "Energy and persistence conquer all things.", author: "Benjamin Franklin" },
+      { text: "Distraction is the enemy of vision.", author: "T.D. Jakes" },
+      { text: "Your future is created by what you do today, not tomorrow.", author: "Robert Kiyosaki" },
+      { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+      { text: "You don't need more time. You need more focus.", author: "Unknown" },
+      { text: "Small daily improvements over time lead to stunning results.", author: "Robin Sharma" },
+      { text: "Concentrate all your thoughts upon the work in hand. The sun's rays do not burn until brought to a focus.", author: "Alexander Graham Bell" },
+    ];
+
+    let current = Math.floor(Math.random() * quotes.length);
+
+    function showQuote(i) {
+      document.getElementById('quote-text').textContent = quotes[i].text;
+      document.getElementById('quote-author').textContent = '— ' + quotes[i].author;
+    }
+
+    function nextQuote() {
+      current = (current + 1) % quotes.length;
+      showQuote(current);
+    }
+
+    showQuote(current);
+  </script>
+
+</body>
+</html>
